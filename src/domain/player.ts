@@ -7,6 +7,8 @@ export interface Player {
   steam_id_32?: string
   discord_id?: string
   socials?: Record<string, string>
+  team_id?: string
+  role?: string
   created_at: string
   updated_at: string
 }

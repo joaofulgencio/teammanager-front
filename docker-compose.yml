@@ -1,0 +1,45 @@
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - teammanager
+
+  backend:
+    build: ../TeamManager
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://admin:secretpassword@db:5432/team_manager?sslmode=disable
+      - PORT=8080
+      - ENV=development
+      - AUTH_ENABLED=false
+    depends_on:
+      - db
+    networks:
+      - teammanager
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secretpassword
+      - POSTGRES_DB=team_manager
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - teammanager
+
+networks:
+  teammanager:
+    driver: bridge
+
+volumes:
+  postgres_data:

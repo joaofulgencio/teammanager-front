@@ -7,6 +7,25 @@ export const api = axios.create({
   },
 })
 
+// Token getter function - set by AuthContext
+let getAccessToken: (() => string | null) | null = null
+
+export function setAuthTokenGetter(getter: () => string | null) {
+  getAccessToken = getter
+}
+
+// Request interceptor to add auth header
+api.interceptors.request.use(
+  (config) => {
+    const token = getAccessToken?.()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
